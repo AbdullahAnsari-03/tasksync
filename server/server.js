@@ -9,8 +9,6 @@ const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const path = require('path');
 
-
-
 dotenv.config();
 
 const app = express();
@@ -19,21 +17,33 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
 
-
-// Rate limiter (basic example)
+// Rate limiter (move this before routes for better protection)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
   max: 100, // Limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
+
 // Basic test route
 app.get('/', (req, res) => {
   res.send('TaskSync Pro Backend is Running!');
 });
+
+// Serve React frontend in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from React build
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  // Handle React routing - send all non-API requests to React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  });
+}
 
 // Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI, {
@@ -49,12 +59,3 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch((err) => {
   console.error('MongoDB connection error:', err);
 });
-
-// Serve React frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
-  });
-}
