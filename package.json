@@ -1,11 +1,17 @@
 {
   "name": "tasksync",
   "version": "1.0.0",
-"scripts": {
-  "start": "node server/server.js",
-  "build": "cd client && npm install && npm run build"
-},
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "cd client && npm install && npm run build"
+  },
   "engines": {
     "node": "18.x"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.17.0"
   }
 }
