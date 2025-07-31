@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: tasksync
+    env: node
+    plan: free
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        fromSecret: MONGO_URI
+      - key: JWT_SECRET
+        fromSecret: JWT_SECRET
