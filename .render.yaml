@@ -3,9 +3,10 @@ services:
     name: tasksync
     env: node
     plan: free
-    branch: main
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: |
+      npm install
+      cd client && npm install && npm run build
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
